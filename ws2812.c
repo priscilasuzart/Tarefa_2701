@@ -12,6 +12,7 @@
 #define NUM_PIXELS 25
 #define WS2812_PIN 7
 #define TEMPO 1000
+#define BLINK_INTERVAL 100 // Tempo para o LED piscar (50 ms ligado, 50 ms desligado)
 
 // Variável global para armazenar o número atual
 volatile int current_number = 0;
@@ -133,11 +134,18 @@ int main()
     gpio_pull_up(BUTTON_B);
     gpio_set_irq_enabled_with_callback(BUTTON_B, GPIO_IRQ_EDGE_FALL, true, &gpio_irq_handler);
 
+    gpio_init(LED_R_PIN);
+    gpio_set_dir(LED_R_PIN, GPIO_OUT);
+
     while (1)
     {
+        gpio_put(LED_R_PIN, 1); // Liga LED
+        sleep_ms(BLINK_INTERVAL / 2);
+        gpio_put(LED_R_PIN, 0); // Desliga LED
+        sleep_ms(BLINK_INTERVAL / 2);
+        
         set_one_led(led_r, led_g, led_b);
         sleep_ms(TEMPO);
-
     }
 
     return 0;
